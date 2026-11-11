@@ -1,0 +1,73 @@
+$ psql -X -a -h localhost -U postgres -d citas_medicas -f evidencias/sql/07_roles_permisos.sql
+
+-- Roles, membresias, permisos y politicas despues de 03 (como postgres)
+SELECT r.rolname, r.rolcanlogin,
+       COALESCE(string_agg(g.rolname, ', '), '') AS miembro_de
+FROM pg_roles r
+LEFT JOIN pg_auth_members m ON m.member = r.oid
+LEFT JOIN pg_roles g ON g.oid = m.roleid
+WHERE r.rolname IN ('administrador', 'recepcionista', 'medico',
+                    'admin_user', 'recep_user', 'medico_carlos')
+GROUP BY r.rolname, r.rolcanlogin
+ORDER BY r.rolcanlogin, r.rolname;
+    rolname    | rolcanlogin |  miembro_de   
+---------------+-------------+---------------
+ administrador | f           | 
+ medico        | f           | 
+ recepcionista | f           | 
+ admin_user    | t           | administrador
+ medico_carlos | t           | medico
+ recep_user    | t           | recepcionista
+(6 filas)
+
+-- permisos sobre tablas y vistas
+SELECT table_name AS objeto, grantee AS rol,
+       string_agg(privilege_type, ', ' ORDER BY privilege_type) AS permisos
+FROM information_schema.table_privileges
+WHERE grantee IN ('administrador', 'recepcionista', 'medico')
+GROUP BY table_name, grantee
+ORDER BY grantee, table_name;
+       objeto        |      rol      |            permisos            
+---------------------+---------------+--------------------------------
+ auditoria_cita      | administrador | SELECT
+ cita                | administrador | DELETE, INSERT, SELECT, UPDATE
+ especialidad        | administrador | DELETE, INSERT, SELECT, UPDATE
+ horario             | administrador | DELETE, INSERT, SELECT, UPDATE
+ medico              | administrador | DELETE, INSERT, SELECT, UPDATE
+ paciente            | administrador | DELETE, INSERT, SELECT, UPDATE
+ vista_agenda_medico | administrador | SELECT
+ vista_recepcion     | administrador | SELECT
+ cita                | medico        | SELECT
+ vista_agenda_medico | medico        | SELECT
+ cita                | recepcionista | INSERT, UPDATE
+ horario             | recepcionista | SELECT
+ vista_recepcion     | recepcionista | SELECT
+(13 filas)
+
+-- permisos dados solo sobre algunas columnas
+SELECT c.relname AS tabla, a.attname AS columna, a.attacl AS permisos
+FROM pg_attribute a
+JOIN pg_class c ON c.oid = a.attrelid
+WHERE a.attacl IS NOT NULL AND c.relnamespace = 'public'::regnamespace
+ORDER BY 1, 2;
+ tabla  |  columna   |          permisos          
+--------+------------+----------------------------
+ cita   | id         | {recepcionista=r/postgres}
+ medico | id         | {medico=r/postgres}
+ medico | usuario_db | {medico=r/postgres}
+(3 filas)
+
+-- politicas RLS sobre cita
+SELECT policyname, cmd, roles, qual, with_check
+FROM pg_policies WHERE tablename = 'cita' ORDER BY policyname;
+     policyname      |  cmd   |      roles      |                         qual                         | with_check 
+---------------------+--------+-----------------+------------------------------------------------------+------------
+ admin_todo_cita     | ALL    | {administrador} | true                                                 | true
+ medico_ve_sus_citas | SELECT | {medico}        | (medico_id = ( SELECT medico.id                     +| 
+                     |        |                 |    FROM medico                                      +| 
+                     |        |                 |   WHERE ((medico.usuario_db)::text = CURRENT_USER))) | 
+ recep_insert_cita   | INSERT | {recepcionista} |                                                      | true
+ recep_select_cita   | SELECT | {recepcionista} | true                                                 | 
+ recep_update_cita   | UPDATE | {recepcionista} | true                                                 | true
+(5 filas)
+

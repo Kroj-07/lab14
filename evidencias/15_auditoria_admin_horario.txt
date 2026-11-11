@@ -1,0 +1,20 @@
+$ psql -X -a -h localhost -U admin_user -d citas_medicas -f evidencias/sql/15_auditoria_admin_horario.sql
+
+-- AUDITORIA paso 1: el administrador crea un horario libre
+-- Cuenta: admin_user
+SELECT current_user, session_user;
+ current_user | session_user 
+--------------+--------------
+ admin_user   | admin_user
+(1 fila)
+
+INSERT INTO horario (medico_id, fecha_hora) VALUES (3, '2026-06-06 08:00:00')
+RETURNING id, medico_id, fecha_hora;
+ id | medico_id |     fecha_hora      
+----+-----------+---------------------
+ 21 |         3 | 2026-06-06 08:00:00
+(1 fila)
+
+INSERT 0 1
+
+(código de salida de psql: 0)

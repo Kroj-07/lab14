@@ -1,0 +1,14 @@
+$ psql -X -a -h localhost -U recep_user -d citas_medicas -f evidencias/sql/12_ensayo4_recep_dni.sql
+
+-- ENSAYO 4 (denegado): recepcion intenta leer el documento del paciente
+-- Cuenta: recep_user. Esperado: error de permisos
+SELECT current_user, session_user;
+ current_user | session_user 
+--------------+--------------
+ recep_user   | recep_user
+(1 fila)
+
+SELECT dni FROM paciente;
+psql:evidencias/sql/12_ensayo4_recep_dni.sql:4: ERROR:  permiso denegado a la tabla paciente
+
+(código de salida de psql: 0)

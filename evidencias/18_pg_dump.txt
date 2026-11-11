@@ -1,0 +1,60 @@
+$ pg_dump -Fc -h localhost -U postgres -d citas_medicas -f citas_medicas.backup
+(código de salida: 0)
+
+$ ls -l citas_medicas.backup
+27750 Nov 10 22:54 citas_medicas.backup
+
+$ pg_restore --list citas_medicas.backup   (objetos principales)
+233; 1255 25592 FUNCTION public fn_auditoria_cita() postgres
+5108; 0 0 ACL public FUNCTION fn_auditoria_cita() postgres
+232; 1259 25577 TABLE public auditoria_cita postgres
+5109; 0 0 ACL public TABLE auditoria_cita postgres
+228; 1259 25515 TABLE public cita postgres
+5111; 0 0 ACL public TABLE cita postgres
+220; 1259 25455 TABLE public especialidad postgres
+5115; 0 0 ACL public TABLE especialidad postgres
+226; 1259 25498 TABLE public horario postgres
+5118; 0 0 ACL public TABLE horario postgres
+222; 1259 25466 TABLE public medico postgres
+5121; 0 0 ACL public TABLE medico postgres
+224; 1259 25486 TABLE public paciente postgres
+5126; 0 0 ACL public TABLE paciente postgres
+229; 1259 25561 VIEW public vista_agenda_medico postgres
+5129; 0 0 ACL public TABLE vista_agenda_medico postgres
+230; 1259 25571 VIEW public vista_recepcion postgres
+5130; 0 0 ACL public TABLE vista_recepcion postgres
+5100; 0 25577 TABLE DATA public auditoria_cita postgres
+5098; 0 25515 TABLE DATA public cita postgres
+5090; 0 25455 TABLE DATA public especialidad postgres
+5096; 0 25498 TABLE DATA public horario postgres
+5092; 0 25466 TABLE DATA public medico postgres
+5094; 0 25486 TABLE DATA public paciente postgres
+4926; 2606 25591 CONSTRAINT public auditoria_cita auditoria_cita_pkey postgres
+4922; 2606 25528 CONSTRAINT public cita cita_horario_id_key postgres
+4924; 2606 25526 CONSTRAINT public cita cita_pkey postgres
+4902; 2606 25464 CONSTRAINT public especialidad especialidad_nombre_key postgres
+4904; 2606 25462 CONSTRAINT public especialidad especialidad_pkey postgres
+4916; 2606 25506 CONSTRAINT public horario horario_pkey postgres
+4906; 2606 25477 CONSTRAINT public medico medico_dni_key postgres
+4908; 2606 25475 CONSTRAINT public medico medico_pkey postgres
+4910; 2606 25479 CONSTRAINT public medico medico_usuario_db_key postgres
+4912; 2606 25496 CONSTRAINT public paciente paciente_dni_key postgres
+4914; 2606 25494 CONSTRAINT public paciente paciente_pkey postgres
+4918; 2606 25545 CONSTRAINT public horario uq_horario_id_medico postgres
+4920; 2606 25508 CONSTRAINT public horario uq_medico_horario postgres
+4933; 2620 25593 TRIGGER public cita trg_auditoria_cita postgres
+4929; 2606 25539 FK CONSTRAINT public cita cita_horario_id_fkey postgres
+4930; 2606 25534 FK CONSTRAINT public cita cita_medico_id_fkey postgres
+4931; 2606 25529 FK CONSTRAINT public cita cita_paciente_id_fkey postgres
+4932; 2606 25546 FK CONSTRAINT public cita fk_cita_horario_medico postgres
+4928; 2606 25509 FK CONSTRAINT public horario horario_medico_id_fkey postgres
+4927; 2606 25480 FK CONSTRAINT public medico medico_especialidad_id_fkey postgres
+5088; 3256 25570 POLICY public cita admin_todo_cita postgres
+5083; 0 25515 ROW SECURITY public cita postgres
+5084; 3256 25566 POLICY public cita medico_ve_sus_citas postgres
+5086; 3256 25568 POLICY public cita recep_insert_cita postgres
+5085; 3256 25567 POLICY public cita recep_select_cita postgres
+5087; 3256 25569 POLICY public cita recep_update_cita postgres
+
+$ pg_restore --list citas_medicas.backup | grep -c " ROLE "   (el respaldo no trae CREATE ROLE)
+0

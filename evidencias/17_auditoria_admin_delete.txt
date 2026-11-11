@@ -1,0 +1,33 @@
+$ psql -X -a -h localhost -U admin_user -d citas_medicas -f evidencias/sql/17_auditoria_admin_delete.sql
+
+-- AUDITORIA paso 3: el administrador elimina la cita de prueba y revisa el historial
+-- Cuenta: admin_user
+SELECT current_user, session_user;
+ current_user | session_user 
+--------------+--------------
+ admin_user   | admin_user
+(1 fila)
+
+DELETE FROM cita
+WHERE horario_id = (SELECT id FROM horario WHERE medico_id = 3 AND fecha_hora = '2026-06-06 08:00:00')
+RETURNING id;
+ id 
+----
+ 21
+(1 fila)
+
+DELETE 1
+SELECT id, operacion, fecha_hora, usuario_bd, cita_id,
+       datos_anteriores ->> 'estado' AS estado_antes,
+       datos_nuevos ->> 'estado'     AS estado_despues
+FROM auditoria_cita
+ORDER BY id;
+ id | operacion |          fecha_hora           | usuario_bd | cita_id | estado_antes | estado_despues 
+----+-----------+-------------------------------+------------+---------+--------------+----------------
+  1 | INSERT    | 2026-11-10 22:54:56.945237-05 | recep_user |      21 |              | agendada
+  2 | UPDATE    | 2026-11-10 22:54:56.964161-05 | recep_user |       1 | completada   | completada
+  3 | DELETE    | 2026-11-10 22:54:57.045514-05 | admin_user |      21 | agendada     | 
+(3 filas)
+
+
+(código de salida de psql: 0)

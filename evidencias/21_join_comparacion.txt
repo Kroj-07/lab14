@@ -1,0 +1,83 @@
+$ psql -X -a -h localhost -U postgres -d citas_medicas -f evidencias/sql/21_join1.sql
+-- Consulta JOIN 1 de 02_datos.sql, repetida para comprobar la restauracion
+SELECT 
+    c.id AS id_cita,
+    p.nombre AS paciente,
+    m.nombre AS medico,
+    e.nombre AS especialidad,
+    h.fecha_hora,
+    c.estado
+FROM cita c
+JOIN paciente p ON c.paciente_id = p.id
+JOIN medico m ON c.medico_id = m.id
+JOIN especialidad e ON m.especialidad_id = e.id
+JOIN horario h ON c.horario_id = h.id
+ORDER BY h.fecha_hora;
+ id_cita |    paciente     |       medico       | especialidad |     fecha_hora      |   estado   
+---------+-----------------+--------------------+--------------+---------------------+------------
+       5 | Diego Sanchez   | Dra. Ana Torres    | Cardiología  | 2026-06-01 08:00:00 | agendada
+       1 | Juan Perez      | Dr. Carlos Mendoza | Cardiología  | 2026-06-01 08:00:00 | completada
+       2 | Maria Lopez     | Dr. Carlos Mendoza | Cardiología  | 2026-06-01 09:00:00 | agendada
+       6 | Elena Torres    | Dra. Ana Torres    | Cardiología  | 2026-06-01 09:00:00 | agendada
+       3 | Pedro Ramirez   | Dr. Carlos Mendoza | Cardiología  | 2026-06-01 10:00:00 | agendada
+       7 | Gabriel Morales | Dra. Ana Torres    | Cardiología  | 2026-06-01 10:00:00 | agendada
+       8 | Carmen Ruiz     | Dra. Ana Torres    | Cardiología  | 2026-06-01 11:00:00 | agendada
+       4 | Lucia Fernandez | Dr. Carlos Mendoza | Cardiología  | 2026-06-01 11:00:00 | agendada
+      13 | Pedro Ramirez   | Dra. Sofia Castro  | Pediatría    | 2026-06-02 08:00:00 | agendada
+       9 | Rosa Flores     | Dr. Luis Gomez     | Pediatría    | 2026-06-02 08:00:00 | agendada
+      10 | Javier Benitez  | Dr. Luis Gomez     | Pediatría    | 2026-06-02 09:00:00 | agendada
+      14 | Lucia Fernandez | Dra. Sofia Castro  | Pediatría    | 2026-06-02 09:00:00 | agendada
+      11 | Juan Perez      | Dr. Luis Gomez     | Pediatría    | 2026-06-02 10:00:00 | agendada
+      15 | Diego Sanchez   | Dra. Sofia Castro  | Pediatría    | 2026-06-02 10:00:00 | agendada
+      16 | Elena Torres    | Dra. Sofia Castro  | Pediatría    | 2026-06-02 11:00:00 | agendada
+      12 | Maria Lopez     | Dr. Luis Gomez     | Pediatría    | 2026-06-02 11:00:00 | agendada
+      17 | Gabriel Morales | Dr. Jorge Vargas   | Dermatología | 2026-06-03 08:00:00 | agendada
+      18 | Carmen Ruiz     | Dr. Jorge Vargas   | Dermatología | 2026-06-03 09:00:00 | agendada
+      19 | Rosa Flores     | Dr. Jorge Vargas   | Dermatología | 2026-06-03 10:00:00 | agendada
+      20 | Javier Benitez  | Dr. Jorge Vargas   | Dermatología | 2026-06-03 11:00:00 | agendada
+(20 filas)
+
+
+$ psql -X -a -h localhost -U postgres -d citas_restaurada -f evidencias/sql/21_join1.sql
+-- Consulta JOIN 1 de 02_datos.sql, repetida para comprobar la restauracion
+SELECT 
+    c.id AS id_cita,
+    p.nombre AS paciente,
+    m.nombre AS medico,
+    e.nombre AS especialidad,
+    h.fecha_hora,
+    c.estado
+FROM cita c
+JOIN paciente p ON c.paciente_id = p.id
+JOIN medico m ON c.medico_id = m.id
+JOIN especialidad e ON m.especialidad_id = e.id
+JOIN horario h ON c.horario_id = h.id
+ORDER BY h.fecha_hora;
+ id_cita |    paciente     |       medico       | especialidad |     fecha_hora      |   estado   
+---------+-----------------+--------------------+--------------+---------------------+------------
+       5 | Diego Sanchez   | Dra. Ana Torres    | Cardiología  | 2026-06-01 08:00:00 | agendada
+       1 | Juan Perez      | Dr. Carlos Mendoza | Cardiología  | 2026-06-01 08:00:00 | completada
+       2 | Maria Lopez     | Dr. Carlos Mendoza | Cardiología  | 2026-06-01 09:00:00 | agendada
+       6 | Elena Torres    | Dra. Ana Torres    | Cardiología  | 2026-06-01 09:00:00 | agendada
+       3 | Pedro Ramirez   | Dr. Carlos Mendoza | Cardiología  | 2026-06-01 10:00:00 | agendada
+       7 | Gabriel Morales | Dra. Ana Torres    | Cardiología  | 2026-06-01 10:00:00 | agendada
+       8 | Carmen Ruiz     | Dra. Ana Torres    | Cardiología  | 2026-06-01 11:00:00 | agendada
+       4 | Lucia Fernandez | Dr. Carlos Mendoza | Cardiología  | 2026-06-01 11:00:00 | agendada
+      13 | Pedro Ramirez   | Dra. Sofia Castro  | Pediatría    | 2026-06-02 08:00:00 | agendada
+       9 | Rosa Flores     | Dr. Luis Gomez     | Pediatría    | 2026-06-02 08:00:00 | agendada
+      10 | Javier Benitez  | Dr. Luis Gomez     | Pediatría    | 2026-06-02 09:00:00 | agendada
+      14 | Lucia Fernandez | Dra. Sofia Castro  | Pediatría    | 2026-06-02 09:00:00 | agendada
+      11 | Juan Perez      | Dr. Luis Gomez     | Pediatría    | 2026-06-02 10:00:00 | agendada
+      15 | Diego Sanchez   | Dra. Sofia Castro  | Pediatría    | 2026-06-02 10:00:00 | agendada
+      16 | Elena Torres    | Dra. Sofia Castro  | Pediatría    | 2026-06-02 11:00:00 | agendada
+      12 | Maria Lopez     | Dr. Luis Gomez     | Pediatría    | 2026-06-02 11:00:00 | agendada
+      17 | Gabriel Morales | Dr. Jorge Vargas   | Dermatología | 2026-06-03 08:00:00 | agendada
+      18 | Carmen Ruiz     | Dr. Jorge Vargas   | Dermatología | 2026-06-03 09:00:00 | agendada
+      19 | Rosa Flores     | Dr. Jorge Vargas   | Dermatología | 2026-06-03 10:00:00 | agendada
+      20 | Javier Benitez  | Dr. Jorge Vargas   | Dermatología | 2026-06-03 11:00:00 | agendada
+(20 filas)
+
+
+# Comparacion de las filas de ambas bases:
+$ diff <(psql -X -At -d citas_medicas -f evidencias/sql/21_join1.sql) <(psql -X -At -d citas_restaurada -f evidencias/sql/21_join1.sql) && echo "Sin diferencias"
+Sin diferencias

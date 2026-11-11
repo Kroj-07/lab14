@@ -1,0 +1,9 @@
+$ dropdb -h localhost -U postgres --if-exists citas_restaurada
+(código de salida: 0)
+
+$ dropdb -h localhost -U postgres --if-exists citas_medicas
+(código de salida: 0)
+
+$ createdb -h localhost -U postgres citas_medicas
+(código de salida: 0)
+

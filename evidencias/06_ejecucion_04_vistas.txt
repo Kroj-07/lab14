@@ -1,0 +1,49 @@
+$ psql -X -a -h localhost -U postgres -d citas_medicas -f 04_vistas.sql
+
+-- ============================================================================
+-- ACTIVIDAD 4: VISTAS Y PRIVACIDAD DE DATOS (ENMASCARAMIENTO)
+
+CREATE OR REPLACE VIEW vista_recepcion AS
+SELECT 
+    c.id AS id_cita,
+    p.nombre AS paciente_nombre,
+    p.telefono AS paciente_telefono,
+    m.nombre AS medico_nombre,
+    e.nombre AS especialidad,
+    h.fecha_hora,
+    c.estado
+FROM cita c
+JOIN paciente p ON c.paciente_id = p.id
+JOIN medico m ON c.medico_id = m.id
+JOIN especialidad e ON m.especialidad_id = e.id
+JOIN horario h ON c.horario_id = h.id;
+CREATE VIEW
+
+GRANT SELECT ON vista_recepcion TO recepcionista;
+GRANT
+
+-- Demostración SQL de Enmascaramiento / Seudonimización
+SELECT 
+    id,
+    nombre,
+    dni AS dni_original,
+    CONCAT('****', SUBSTRING(dni FROM 5 FOR 4)) AS dni_enmascarado,
+    email AS email_original,
+    CONCAT(SUBSTRING(email FROM 1 FOR 2), '***@', SPLIT_PART(email, '@', 2)) AS email_enmascarado
+FROM paciente;
+ id |     nombre      | dni_original | dni_enmascarado |     email_original      | email_enmascarado 
+----+-----------------+--------------+-----------------+-------------------------+-------------------
+  1 | Juan Perez      | 70000001     | ****0001        | juan.perez@email.com    | ju***@email.com
+  2 | Maria Lopez     | 70000002     | ****0002        | maria.lopez@email.com   | ma***@email.com
+  3 | Pedro Ramirez   | 70000003     | ****0003        | pedro.ramirez@email.com | pe***@email.com
+  4 | Lucia Fernandez | 70000004     | ****0004        | lucia.f@email.com       | lu***@email.com
+  5 | Diego Sanchez   | 70000005     | ****0005        | diego.s@email.com       | di***@email.com
+  6 | Elena Torres    | 70000006     | ****0006        | elena.t@email.com       | el***@email.com
+  7 | Gabriel Morales | 70000007     | ****0007        | gabriel.m@email.com     | ga***@email.com
+  8 | Carmen Ruiz     | 70000008     | ****0008        | carmen.r@email.com      | ca***@email.com
+  9 | Rosa Flores     | 70000009     | ****0009        | rosa.f@email.com        | ro***@email.com
+ 10 | Javier Benitez  | 70000010     | ****0010        | javier.b@email.com      | ja***@email.com
+(10 filas)
+
+
+(código de salida de psql: 0)

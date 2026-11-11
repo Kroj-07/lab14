@@ -1,0 +1,18 @@
+$ psql --version
+psql (PostgreSQL) 18.4
+$ pg_dump --version
+pg_dump (PostgreSQL) 18.4
+$ pg_restore --version
+pg_restore (PostgreSQL) 18.4
+$ createdb --version
+createdb (PostgreSQL) 18.4
+$ dropdb --version
+dropdb (PostgreSQL) 18.4
+
+$ psql -X -a -h localhost -U postgres -d postgres -c "SELECT version();"
+SELECT version();
+                                 version                                 
+-------------------------------------------------------------------------
+ PostgreSQL 18.4 on x86_64-windows, compiled by msvc-19.44.35227, 64-bit
+(1 fila)
+

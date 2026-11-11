@@ -1,0 +1,14 @@
+$ psql -X -a -h localhost -U medico_carlos -d citas_medicas -f evidencias/sql/13_ensayo5_medico_update.sql
+
+-- ENSAYO 5 (denegado): el medico intenta modificar una de sus citas
+-- Cuenta: medico_carlos. Esperado: error de permisos
+SELECT current_user, session_user;
+ current_user  | session_user  
+---------------+---------------
+ medico_carlos | medico_carlos
+(1 fila)
+
+UPDATE cita SET estado = 'cancelada' WHERE id = 2;
+psql:evidencias/sql/13_ensayo5_medico_update.sql:4: ERROR:  permiso denegado a la tabla cita
+
+(código de salida de psql: 0)

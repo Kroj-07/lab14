@@ -1,0 +1,10 @@
+$ dropdb -h localhost -U postgres --if-exists citas_restaurada
+NOTICE:  no existe la base de datos «citas_restaurada», omitiendo
+(código de salida: 0)
+
+$ createdb -h localhost -U postgres citas_restaurada
+(código de salida: 0)
+
+$ pg_restore -h localhost -U postgres -d citas_restaurada citas_medicas.backup
+(código de salida: 0)
+

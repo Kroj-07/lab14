@@ -1,0 +1,38 @@
+$ psql -X -a -h localhost -U postgres -d citas_medicas -f evidencias/sql/20_conteos.sql
+-- Conteo de filas por tabla (se corre igual en citas_medicas y en citas_restaurada)
+SELECT current_database() AS base, 'especialidad' AS tabla, count(*) AS filas FROM especialidad
+UNION ALL SELECT current_database(), 'medico',         count(*) FROM medico
+UNION ALL SELECT current_database(), 'paciente',       count(*) FROM paciente
+UNION ALL SELECT current_database(), 'horario',        count(*) FROM horario
+UNION ALL SELECT current_database(), 'cita',           count(*) FROM cita
+UNION ALL SELECT current_database(), 'auditoria_cita', count(*) FROM auditoria_cita;
+     base      |     tabla      | filas 
+---------------+----------------+-------
+ citas_medicas | especialidad   |     3
+ citas_medicas | medico         |     5
+ citas_medicas | paciente       |    10
+ citas_medicas | horario        |    21
+ citas_medicas | cita           |    20
+ citas_medicas | auditoria_cita |     3
+(6 filas)
+
+
+$ psql -X -a -h localhost -U postgres -d citas_restaurada -f evidencias/sql/20_conteos.sql
+-- Conteo de filas por tabla (se corre igual en citas_medicas y en citas_restaurada)
+SELECT current_database() AS base, 'especialidad' AS tabla, count(*) AS filas FROM especialidad
+UNION ALL SELECT current_database(), 'medico',         count(*) FROM medico
+UNION ALL SELECT current_database(), 'paciente',       count(*) FROM paciente
+UNION ALL SELECT current_database(), 'horario',        count(*) FROM horario
+UNION ALL SELECT current_database(), 'cita',           count(*) FROM cita
+UNION ALL SELECT current_database(), 'auditoria_cita', count(*) FROM auditoria_cita;
+       base       |     tabla      | filas 
+------------------+----------------+-------
+ citas_restaurada | especialidad   |     3
+ citas_restaurada | medico         |     5
+ citas_restaurada | paciente       |    10
+ citas_restaurada | horario        |    21
+ citas_restaurada | cita           |    20
+ citas_restaurada | auditoria_cita |     3
+(6 filas)
+
+

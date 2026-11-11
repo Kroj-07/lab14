@@ -1,0 +1,65 @@
+$ psql -X -a -h localhost -U postgres -d citas_medicas -f 01_esquema.sql
+
+DROP TABLE IF EXISTS cita CASCADE;
+psql:01_esquema.sql:1: NOTICE:  la tabla «cita» no existe, omitiendo
+DROP TABLE
+DROP TABLE IF EXISTS horario CASCADE;
+psql:01_esquema.sql:2: NOTICE:  la tabla «horario» no existe, omitiendo
+DROP TABLE
+DROP TABLE IF EXISTS medico CASCADE;
+psql:01_esquema.sql:3: NOTICE:  la tabla «medico» no existe, omitiendo
+DROP TABLE
+DROP TABLE IF EXISTS especialidad CASCADE;
+psql:01_esquema.sql:4: NOTICE:  la tabla «especialidad» no existe, omitiendo
+DROP TABLE
+DROP TABLE IF EXISTS paciente CASCADE;
+psql:01_esquema.sql:5: NOTICE:  la tabla «paciente» no existe, omitiendo
+DROP TABLE
+
+CREATE TABLE especialidad (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL UNIQUE
+);
+CREATE TABLE
+
+CREATE TABLE medico (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(150) NOT NULL,
+    dni VARCHAR(15) UNIQUE NOT NULL,
+    especialidad_id INT NOT NULL
+		REFERENCES especialidad(id) ON DELETE RESTRICT,
+    usuario_db VARCHAR(50) UNIQUE -- Permite vincular el usuario PostgreSQL con el médico
+);
+CREATE TABLE
+
+CREATE TABLE paciente (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(150) NOT NULL,
+    dni VARCHAR(15) UNIQUE NOT NULL,
+    telefono VARCHAR(20),
+    email VARCHAR(100)
+);
+CREATE TABLE
+
+CREATE TABLE horario (
+    id SERIAL PRIMARY KEY,
+    medico_id INT NOT NULL 
+		REFERENCES medico(id) ON DELETE CASCADE,
+    fecha_hora TIMESTAMP NOT NULL,
+    CONSTRAINT uq_medico_horario UNIQUE (medico_id, fecha_hora) 
+);
+CREATE TABLE
+
+CREATE TABLE cita (
+    id SERIAL PRIMARY KEY,
+    paciente_id INT NOT NULL
+		REFERENCES paciente(id) ON DELETE RESTRICT,
+    medico_id INT NOT NULL
+		REFERENCES medico(id) ON DELETE RESTRICT,
+    horario_id INT NOT NULL UNIQUE
+		REFERENCES horario(id) ON DELETE RESTRICT, 
+    estado VARCHAR(20) DEFAULT 'agendada' CHECK (estado IN ('agendada', 'completada', 'cancelada'))
+);
+CREATE TABLE
+
+(código de salida de psql: 0)

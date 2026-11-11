@@ -1,0 +1,37 @@
+$ psql -X -a -h localhost -U recep_user -d citas_medicas -f evidencias/sql/09_ensayo1_recep_vista.sql
+
+-- ENSAYO 1 (permitido): recepcion consulta la vista de recepcion
+-- Cuenta: recep_user
+SELECT current_user, session_user;
+ current_user | session_user 
+--------------+--------------
+ recep_user   | recep_user
+(1 fila)
+
+SELECT * FROM vista_recepcion ORDER BY id_cita;
+ id_cita | paciente_nombre | paciente_telefono |   medico_nombre    | especialidad |     fecha_hora      |  estado  
+---------+-----------------+-------------------+--------------------+--------------+---------------------+----------
+       1 | Juan Perez      | 999111001         | Dr. Carlos Mendoza | Cardiología  | 2026-06-01 08:00:00 | agendada
+       2 | Maria Lopez     | 999111002         | Dr. Carlos Mendoza | Cardiología  | 2026-06-01 09:00:00 | agendada
+       3 | Pedro Ramirez   | 999111003         | Dr. Carlos Mendoza | Cardiología  | 2026-06-01 10:00:00 | agendada
+       4 | Lucia Fernandez | 999111004         | Dr. Carlos Mendoza | Cardiología  | 2026-06-01 11:00:00 | agendada
+       5 | Diego Sanchez   | 999111005         | Dra. Ana Torres    | Cardiología  | 2026-06-01 08:00:00 | agendada
+       6 | Elena Torres    | 999111006         | Dra. Ana Torres    | Cardiología  | 2026-06-01 09:00:00 | agendada
+       7 | Gabriel Morales | 999111007         | Dra. Ana Torres    | Cardiología  | 2026-06-01 10:00:00 | agendada
+       8 | Carmen Ruiz     | 999111008         | Dra. Ana Torres    | Cardiología  | 2026-06-01 11:00:00 | agendada
+       9 | Rosa Flores     | 999111009         | Dr. Luis Gomez     | Pediatría    | 2026-06-02 08:00:00 | agendada
+      10 | Javier Benitez  | 999111010         | Dr. Luis Gomez     | Pediatría    | 2026-06-02 09:00:00 | agendada
+      11 | Juan Perez      | 999111001         | Dr. Luis Gomez     | Pediatría    | 2026-06-02 10:00:00 | agendada
+      12 | Maria Lopez     | 999111002         | Dr. Luis Gomez     | Pediatría    | 2026-06-02 11:00:00 | agendada
+      13 | Pedro Ramirez   | 999111003         | Dra. Sofia Castro  | Pediatría    | 2026-06-02 08:00:00 | agendada
+      14 | Lucia Fernandez | 999111004         | Dra. Sofia Castro  | Pediatría    | 2026-06-02 09:00:00 | agendada
+      15 | Diego Sanchez   | 999111005         | Dra. Sofia Castro  | Pediatría    | 2026-06-02 10:00:00 | agendada
+      16 | Elena Torres    | 999111006         | Dra. Sofia Castro  | Pediatría    | 2026-06-02 11:00:00 | agendada
+      17 | Gabriel Morales | 999111007         | Dr. Jorge Vargas   | Dermatología | 2026-06-03 08:00:00 | agendada
+      18 | Carmen Ruiz     | 999111008         | Dr. Jorge Vargas   | Dermatología | 2026-06-03 09:00:00 | agendada
+      19 | Rosa Flores     | 999111009         | Dr. Jorge Vargas   | Dermatología | 2026-06-03 10:00:00 | agendada
+      20 | Javier Benitez  | 999111010         | Dr. Jorge Vargas   | Dermatología | 2026-06-03 11:00:00 | agendada
+(20 filas)
+
+
+(código de salida de psql: 0)

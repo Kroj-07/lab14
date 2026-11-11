@@ -1,0 +1,54 @@
+$ psql -X -a -h localhost -d citas_medicas -f evidencias/sql/08_ssl.sql
+
+-- Actividad 2: verificacion de SSL/TLS en el servidor y en la sesion actual
+SHOW ssl;
+ ssl 
+-----
+ off
+(1 fila)
+
+SELECT ssl FROM pg_stat_ssl WHERE pid = pg_backend_pid();
+ ssl 
+-----
+ f
+(1 fila)
+
+-- detalle de la sesion (si no hay TLS, version y cipher salen vacios)
+SELECT pid, ssl, version, cipher FROM pg_stat_ssl WHERE pid = pg_backend_pid();
+  pid  | ssl | version | cipher 
+-------+-----+---------+--------
+ 18444 | f   |         | 
+(1 fila)
+
+SELECT inet_client_addr() AS ip_cliente, inet_server_addr() AS ip_servidor;
+ ip_cliente | ip_servidor 
+------------+-------------
+ ::1        | ::1
+(1 fila)
+
+-- reglas de pg_hba.conf: host acepta con o sin TLS, hostssl solo con TLS
+SELECT line_number, type, database, user_name, address, auth_method
+FROM pg_hba_file_rules ORDER BY line_number;
+ line_number | type  |   database    | user_name |  address  |  auth_method  
+-------------+-------+---------------+-----------+-----------+---------------
+         113 | local | {all}         | {all}     |           | scram-sha-256
+         115 | host  | {all}         | {all}     | 127.0.0.1 | scram-sha-256
+         117 | host  | {all}         | {all}     | ::1       | scram-sha-256
+         120 | local | {replication} | {all}     |           | scram-sha-256
+         121 | host  | {replication} | {all}     | 127.0.0.1 | scram-sha-256
+         122 | host  | {replication} | {all}     | ::1       | scram-sha-256
+(6 filas)
+
+
+# Intento de conexion exigiendo TLS desde el cliente (sslmode=require):
+$ psql -X "host=localhost dbname=citas_medicas user=postgres sslmode=require" -c "SELECT 1;"
+psql: error: falló la conexión al servidor en «localhost» (::1), puerto 5432: el servidor no soporta SSL, pero SSL es requerida
+(código de salida de psql: 2)
+
+# Conexion con el sslmode por defecto del cliente (prefer): intenta TLS y, si el servidor no lo ofrece, sigue sin cifrar:
+$ psql -X "host=localhost dbname=citas_medicas user=postgres sslmode=prefer" -c "SELECT ssl FROM pg_stat_ssl WHERE pid = pg_backend_pid();"
+ ssl 
+-----
+ f
+(1 fila)
+
